@@ -39,6 +39,9 @@ if __name__ == "__main__":
     parser.add_argument('--warmup_iters', type=int, default=0, help="linear lr warmup iters")
     parser.add_argument('--final_iters', type=int, default=0, help="cosine lr final iters")
     parser.add_argument('--sample_every', type=int, default=1, help="sample every epoch")
+    
+    #
+     parser.add_argument('--use_wandb', action='store_true', help="use wandb for visualization")
 
     args = parser.parse_args()
 
