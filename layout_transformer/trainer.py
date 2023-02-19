@@ -55,6 +55,7 @@ class Trainer:
         self.use_wandb = args.use_wandb
         if (self.use_wandb):
             import wandb
+            self.wandb = wandb
             wandb.config.update(args)
 
         # take over whatever gpus are on the system
@@ -129,7 +130,7 @@ class Trainer:
 
                     # report progress
                     if (self.use_wandb):
-                        wandb.log({
+                        self.wandb.log({
                             'train loss': loss.item(),
                             'lr': lr, 'epoch': epoch+1
                         }, step=self.iters)
@@ -194,7 +195,7 @@ class Trainer:
                 #     layout = self.train_dataset.render(layout)
                 #     layout.save(os.path.join(self.config.samples_dir, f'sample_det_{epoch:02d}_{i:02d}.png'))
                 if (self.use_wandb):
-                    wandb.log({
+                    self.wandb.log({
                         "input_layouts": [wandb.Image(pil, caption=f'input_{epoch:02d}_{i:02d}.png')
                                           for i, pil in enumerate(input_layouts)],
                         "recon_layouts": [wandb.Image(pil, caption=f'recon_{epoch:02d}_{i:02d}.png')
