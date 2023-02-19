@@ -52,6 +52,11 @@ if __name__ == "__main__":
     os.makedirs(ckpt_dir, exist_ok=True)
 
     set_seed(args.seed)
+    
+    if (args.use_wandb):
+        import wandb
+        print("Using wandb")
+        wandb.init(project='LayoutTransformer', name=args.exp)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"using device: {device}")
