@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument('--sample_every', type=int, default=1, help="sample every epoch")
     
     #
-     parser.add_argument('--use_wandb', action='store_true', help="use wandb for visualization")
+    parser.add_argument('--use_wandb', action='store_true', help="use wandb for visualization")
 
     args = parser.parse_args()
 
