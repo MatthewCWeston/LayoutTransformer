@@ -5,7 +5,6 @@ so nothing in this file really has anything to do with GPT specifically.
 import os
 import math
 import logging
-#import wandb
 
 from tqdm import tqdm
 import numpy as np
@@ -55,8 +54,7 @@ class Trainer:
         self.fixed_y = None
         self.use_wandb = args.use_wandb
         if (self.use_wandb):
-            print("Using wandb")
-            wandb.init(project='LayoutTransformer', name=args.exp)
+            import wandb
             wandb.config.update(args)
 
         # take over whatever gpus are on the system
