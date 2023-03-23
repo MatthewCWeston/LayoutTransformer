@@ -75,7 +75,7 @@ class Trainer:
         model, config = self.model, self.config
         raw_model = model.module if hasattr(self.model, "module") else model
         optimizer = raw_model.configure_optimizers(config)
-        pad_token = self.train_dataset.vocab_size - 1
+        pad_token = self.train_dataset.dataset.vocab_size - 1
 
         def run_epoch(split):
             is_train = split == 'train'
@@ -163,37 +163,22 @@ class Trainer:
                 # import ipdb; ipdb.set_trace()
                 # inputs
                 layouts = self.fixed_x.detach().cpu().numpy()
-                input_layouts = [self.train_dataset.render(layout) for layout in layouts]
-                # for i, layout in enumerate(layouts):
-                #     layout = self.train_dataset.render(layout)
-                #     layout.save(os.path.join(self.config.samples_dir, f'input_{epoch:02d}_{i:02d}.png'))
-
+                input_layouts = [self.train_dataset.dataset.render(layout) for layout in layouts]
                 # reconstruction
                 x_cond = self.fixed_x.to(self.device)
                 logits, _ = model(x_cond)
                 probs = F.softmax(logits, dim=-1)
                 _, y = torch.topk(probs, k=1, dim=-1)
                 layouts = torch.cat((x_cond[:, :1], y[:, :, 0]), dim=1).detach().cpu().numpy()
-                recon_layouts = [self.train_dataset.render(layout) for layout in layouts]
-                # for i, layout in enumerate(layouts):
-                #     layout = self.train_dataset.render(layout)
-                #     layout.save(os.path.join(self.config.samples_dir, f'recon_{epoch:02d}_{i:02d}.png'))
-
+                recon_layouts = [self.train_dataset.dataset.render(layout) for layout in layouts]
                 # samples - random
-                layouts = sample(model, x_cond[:, :6], steps=self.train_dataset.max_length,
+                layouts = sample(model, x_cond[:, :6], steps=self.train_dataset.dataset.max_length,
                                  temperature=1.0, sample=True, top_k=5).detach().cpu().numpy()
-                sample_random_layouts = [self.train_dataset.render(layout) for layout in layouts]
-                # for i, layout in enumerate(layouts):
-                #     layout = self.train_dataset.render(layout)
-                #     layout.save(os.path.join(self.config.samples_dir, f'sample_random_{epoch:02d}_{i:02d}.png'))
-
+                sample_random_layouts = [self.train_dataset.dataset.render(layout) for layout in layouts]
                 # samples - deterministic
-                layouts = sample(model, x_cond[:, :6], steps=self.train_dataset.max_length,
+                layouts = sample(model, x_cond[:, :6], steps=self.train_dataset.dataset.max_length,
                                  temperature=1.0, sample=False, top_k=None).detach().cpu().numpy()
-                sample_det_layouts = [self.train_dataset.render(layout) for layout in layouts]
-                # for i, layout in enumerate(layouts):
-                #     layout = self.train_dataset.render(layout)
-                #     layout.save(os.path.join(self.config.samples_dir, f'sample_det_{epoch:02d}_{i:02d}.png'))
+                sample_det_layouts = [self.train_dataset.dataset.render(layout) for layout in layouts]
                 if (self.use_wandb):
                     wandb = self.wandb
                     self.wandb.log({
